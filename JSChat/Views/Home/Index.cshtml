@@ -1,0 +1,98 @@
+﻿@model  List<JSChatModel.tMessage>
+@{
+    ViewBag.Title = "JobSity-Chat";
+    var userName = User.Identity.Name;
+    var userId = ViewBag.USERID;
+}
+
+<h2 class="text-left text-primary">
+    <i class="fa fa-comment-dots"></i>&nbsp; Welcome to JobSity Chat
+</h2>
+<hr />
+<div class="row">
+    @if (!Model.Any())
+    {
+        <div id="noMessagesAlert" class="alert alert-danger">
+            <i class="fa fa-comment-slash"></i><strong> No registered messages </strong>
+        </div>
+    }
+    <div id="roomLayer" class="col-md-12">
+
+        @foreach (JSChatModel.tMessage message in Model.OrderBy(m=> m.MDate))
+        {
+            <div class="alert @(userName.Equals(message.UserName) ? "alert-success text-right" : "alert-info")">
+                <i class="fa fa-comment-dots"></i><strong> @message.UserName :</strong>
+                @message.Message
+            </div>
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        @Html.Action("CreateMessage", "Home")
+    </div>
+</div>
+
+@section scripts {
+
+    <script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+
+    <script src="~/signalr/hubs"></script> 
+
+    <script>
+        $(function () {
+
+            var chat = $.connection.chatHub;
+
+            chat.client.Notifify = function (name, message) {
+                let messageclass = name === '@userName' ? 'alert-success text-right' : 'alert-info';
+                let messageHTML = `<div class='alert ${messageclass}'>
+                  <i class='fa fa-comment-dots'></i> <strong>${name} :</strong> ${message}</div>`;
+                $("#roomLayer").append(messageHTML);
+                $("#noMessagesAlert").hide();
+            };
+
+            $('#messageInput').focus();
+
+            $.connection.hub.start().done(function () {
+                $('#sendButton').click(function () {
+                    let url = $(this).data("createurl");
+                    let message = $('#messageInput').val();
+                    let username = $('#usernameHiddeInput').val();
+
+                    if (message == undefined || message == '' || message.trim() == '')
+                        return false;
+
+                    chat.server.send(username, message);
+
+                    if (message.toLowerCase().indexOf("/stock=") < 0) {
+
+                        let form = $("#createMessageForm"); 
+
+                        if (!form[0].checkValidity()) { return; }
+
+                        if (form.valid()) {
+
+                            let dataForm = form.serializeArray();
+
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                data: dataForm,
+                                success: function () {
+                                    $('#messageInput').val('').focus();
+                                },
+                                error: function (xhr, status, error) {
+                                    alert(error);
+                                }
+                            });
+                        }
+                        else {
+                            alert("Form Error!");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

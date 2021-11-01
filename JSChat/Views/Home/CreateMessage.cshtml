@@ -1,0 +1,32 @@
+﻿@model JSChatModel.ViewModels.CreateMessageViewModel
+
+<style>
+    .form-control {
+        max-width : 100%
+    }
+
+    .form-horizontal .form-group {
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+</style>
+@using (Html.BeginForm("Create", "Home", null, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "createMessageForm", onsubmit = "return false" }))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.UserId)    
+    @Html.HiddenFor(m => m.UserName, new { id = "usernameHiddeInput" })
+    <fieldset>
+        <div class="row">
+            <div class="col-lg-10 col-md-10 col-sm-12">
+                <div class="form-group">
+                    @Html.TextBoxFor(m => m.Message, new { id = "messageInput", @class = "form-control", autocomplete = "off" })
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                <button id="sendButton" class="btn btn-primary btn-block" role="button" data-createurl="@Url.Action("Create", "Home", null, Request.Url.Scheme)">Send...</button>
+            </div>
+        </div>
+    </fieldset>
+}
+
+
