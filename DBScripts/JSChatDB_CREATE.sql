@@ -120,7 +120,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[tMessage](
+CREATE TABLE [dbo].[tMessages](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[UserId] [nvarchar](128) NOT NULL,
 	[UserName] [nchar](10) NOT NULL,
