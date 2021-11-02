@@ -123,7 +123,7 @@ GO
 CREATE TABLE [dbo].[tMessages](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[UserId] [nvarchar](128) NOT NULL,
-	[UserName] [nchar](10) NOT NULL,
+	[UserName] [nvarchar](150) NOT NULL,
 	[Message] [nvarchar](max) NOT NULL,
 	[MDate] [datetime] NOT NULL,
  CONSTRAINT [PK_tMessage] PRIMARY KEY CLUSTERED 
